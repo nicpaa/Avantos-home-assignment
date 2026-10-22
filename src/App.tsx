@@ -2,12 +2,13 @@ import { useState } from "react";
 import styles from "./App.module.css";
 import { FormList } from "./components/FormList";
 import { PrefillPanel } from "./components/PrefillPanel";
+import { dataSources } from "./domain/dataSources/registry";
 import { useBlueprintGraph } from "./hooks/useBlueprintGraph";
 import { usePrefillMappings } from "./hooks/usePrefillMappings";
 
 export function App() {
   const graphState = useBlueprintGraph();
-  const { mappings, clearMapping } = usePrefillMappings();
+  const { mappings, setMapping, clearMapping } = usePrefillMappings();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
 
   const graph = graphState.status === "ready" ? graphState.graph : null;
@@ -30,6 +31,8 @@ export function App() {
               graph={graph}
               node={selectedNode}
               mappings={mappings[selectedNode.id] ?? {}}
+              sources={dataSources}
+              onSet={(field, mapping) => setMapping(selectedNode.id, field, mapping)}
               onClear={(field) => clearMapping(selectedNode.id, field)}
             />
           ) : (

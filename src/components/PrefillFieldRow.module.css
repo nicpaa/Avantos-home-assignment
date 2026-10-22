@@ -12,3 +12,12 @@
   border-style: dashed;
   color: #666;
 }
+
+.open {
+  flex: 1;
+  text-align: left;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}

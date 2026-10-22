@@ -4,12 +4,24 @@ import styles from "./PrefillFieldRow.module.css";
 export interface PrefillFieldRowProps {
   field: string;
   mapping?: PrefillMapping;
+  onOpen: () => void;
   onClear: () => void;
 }
 
-export function PrefillFieldRow({ field, mapping, onClear }: PrefillFieldRowProps) {
+export function PrefillFieldRow({
+  field,
+  mapping,
+  onOpen,
+  onClear,
+}: PrefillFieldRowProps) {
   if (!mapping) {
-    return <li className={`${styles.row} ${styles.empty}`}>{field}</li>;
+    return (
+      <li className={`${styles.row} ${styles.empty}`}>
+        <button type="button" className={styles.open} onClick={onOpen}>
+          {field}
+        </button>
+      </li>
+    );
   }
 
   return (
