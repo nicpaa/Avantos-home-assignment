@@ -1,4 +1,4 @@
-import type { BlueprintGraph, Form, GraphNode } from "../../api/types";
+import type { BlueprintGraph, Form, GraphNode, Position } from "../../api/types";
 
 /**
  * Trimmed copy of the mock server's graph.json, same DAG and ids:
@@ -25,7 +25,7 @@ function node(
   name: string,
   formId: string,
   prerequisites: string[],
-  position: GraphNode["position"],
+  position: Position,
 ): GraphNode {
   return { id, position, data: { name, component_id: formId, prerequisites } };
 }

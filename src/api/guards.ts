@@ -1,4 +1,4 @@
-import type { BlueprintGraph, Form, FormField, GraphNode } from "./types";
+import type { BlueprintGraph, Form, FormField, GraphNode, Position } from "./types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -8,7 +8,7 @@ function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
-function isPosition(value: unknown): value is GraphNode["position"] {
+function isPosition(value: unknown): value is Position {
   return isRecord(value) && typeof value.x === "number" && typeof value.y === "number";
 }
 
@@ -18,7 +18,7 @@ function isGraphNode(value: unknown): value is GraphNode {
   }
   const { name, component_id, prerequisites } = value.data;
   return (
-    isPosition(value.position) &&
+    (value.position === undefined || isPosition(value.position)) &&
     typeof name === "string" &&
     typeof component_id === "string" &&
     isStringArray(prerequisites)

@@ -32,6 +32,8 @@ export function App() {
           />
           {selectedNode ? (
             <PrefillPanel
+              // A new form gets a fresh panel: an open modal must not carry over to it.
+              key={selectedNode.id}
               graph={graph}
               node={selectedNode}
               mappings={mappings[selectedNode.id] ?? {}}

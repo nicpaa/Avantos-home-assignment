@@ -67,3 +67,48 @@ describe("layoutGraph", () => {
     });
   });
 });
+
+describe("layoutGraph without editor positions", () => {
+  function placement(graph: BlueprintGraph) {
+    return Object.fromEntries(
+      layoutGraph(graph).nodes.map(({ node, x, y }) => [node.data.name, { x, y }]),
+    );
+  }
+
+  it("places forms in columns by depth, rows in payload order", () => {
+    const graph: BlueprintGraph = {
+      ...blueprintGraph,
+      nodes: blueprintGraph.nodes.map(({ id, data }) => ({ id, data })),
+    };
+    // Column step 300, row step 100, shifted by the 24px padding.
+    expect(placement(graph)).toEqual({
+      "Form A": { x: 24, y: 24 },
+      "Form B": { x: 324, y: 24 },
+      "Form C": { x: 324, y: 124 },
+      "Form D": { x: 624, y: 24 },
+      "Form E": { x: 624, y: 124 },
+      "Form F": { x: 924, y: 24 },
+    });
+  });
+
+  it("uses the depth layout for every node when only one position is missing", () => {
+    const graph: BlueprintGraph = {
+      ...blueprintGraph,
+      nodes: blueprintGraph.nodes.map((node) =>
+        node.id === FORM_F ? { id: node.id, data: node.data } : node,
+      ),
+    };
+    expect(placement(graph)["Form A"]).toEqual({ x: 24, y: 24 });
+  });
+
+  it("terminates on a cycle", () => {
+    const graph: BlueprintGraph = {
+      forms: [],
+      nodes: [
+        { id: "X", data: { name: "X", component_id: "f", prerequisites: ["Y"] } },
+        { id: "Y", data: { name: "Y", component_id: "f", prerequisites: ["X"] } },
+      ],
+    };
+    expect(layoutGraph(graph).nodes).toHaveLength(2);
+  });
+});

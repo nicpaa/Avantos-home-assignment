@@ -35,6 +35,18 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "email" })).toBeInTheDocument();
   });
 
+  it("closes the modal when another form is selected", async () => {
+    render(<App />);
+    await userEvent.click(await screen.findByRole("button", { name: "Form D" }));
+    await userEvent.click(screen.getByRole("button", { name: "email" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+    // Without a focus trap, keyboard users can still reach the graph behind the modal.
+    await userEvent.click(screen.getByRole("button", { name: "Form E" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Form E" })).toBeInTheDocument();
+  });
+
   it("shows the error when the graph can't be loaded", async () => {
     server.use(http.get(buildGraphUrl(), () => HttpResponse.error()));
     render(<App />);

@@ -7,10 +7,16 @@ export interface BlueprintGraph {
   forms: Form[];
 }
 
+/** Top-left corner on the editor canvas, in pixels. */
+export interface Position {
+  x: number;
+  y: number;
+}
+
 export interface GraphNode {
   id: string;
-  /** Top-left corner on the editor canvas, in pixels. */
-  position: { x: number; y: number };
+  /** Saved by the Avantos editor. Optional: only the drawing needs it, prefill doesn't. */
+  position?: Position;
   data: {
     /** Display name, e.g. "Form A". Forms themselves are all named "test form". */
     name: string;

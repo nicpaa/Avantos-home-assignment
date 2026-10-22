@@ -1,6 +1,18 @@
 import type { PrefillMapping } from "../domain/prefill/types";
 import styles from "./PrefillFieldRow.module.css";
 
+// A static element, not a component: one component per file.
+const databaseIcon = (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <ellipse cx="8" cy="4" rx="5" ry="2" stroke="currentColor" strokeWidth="1.5" />
+    <path
+      d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+  </svg>
+);
+
 export interface PrefillFieldRowProps {
   field: string;
   mapping?: PrefillMapping;
@@ -23,7 +35,7 @@ export function PrefillFieldRow({
           className={styles.open}
           onClick={onOpen}
         >
-          <DatabaseIcon />
+          {databaseIcon}
           {field}
         </button>
       </li>
@@ -44,18 +56,5 @@ export function PrefillFieldRow({
         ×
       </button>
     </li>
-  );
-}
-
-function DatabaseIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <ellipse cx="8" cy="4" rx="5" ry="2" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-    </svg>
   );
 }

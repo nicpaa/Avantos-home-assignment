@@ -11,6 +11,11 @@ describe("isBlueprintGraph", () => {
     expect(isBlueprintGraph(withExtras)).toBe(true);
   });
 
+  it("accepts nodes without a position", () => {
+    const node = { id: "a", data: { name: "A", component_id: "f", prerequisites: [] } };
+    expect(isBlueprintGraph({ nodes: [node], forms: [] })).toBe(true);
+  });
+
   it.each([
     ["null", null],
     ["an array", []],
@@ -30,9 +35,15 @@ describe("isBlueprintGraph", () => {
       },
     ],
     [
-      "a node without a position",
+      "a position that isn't numbers",
       {
-        nodes: [{ id: "a", data: { name: "A", component_id: "f", prerequisites: [] } }],
+        nodes: [
+          {
+            id: "a",
+            position: { x: "0", y: 0 },
+            data: { name: "A", component_id: "f", prerequisites: [] },
+          },
+        ],
         forms: [],
       },
     ],

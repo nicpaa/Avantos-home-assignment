@@ -147,11 +147,11 @@ Tests are co-located (`*.test.ts(x)`) and share one fixture graph,
 `src/test/fixtures/graph.ts` — a trimmed copy of the real payload with the same ids and DAG.
 Components are queried by role/label/text; the network is mocked with MSW.
 
-- `api/guards.test.ts` — accepts the real shape and extra fields, rejects malformed payloads
+- `api/guards.test.ts` — accepts the real shape, extra fields and missing positions, rejects malformed payloads
 - `api/client.test.ts` — success, HTTP error, network error (with `cause`), invalid JSON, wrong shape
 - `domain/graph/traversal.test.ts` — root, direct vs transitive, diamond (A listed once), unknown id, cycle
 - `domain/graph/forms.test.ts` — node → shared form, buttons excluded from fields
-- `domain/graph/layout.test.ts` — offsets and size of the drawing, one edge per prerequisite, edge path
+- `domain/graph/layout.test.ts` — offsets and size of the drawing, one edge per prerequisite, edge path, depth layout when positions are missing
 - `domain/prefill/prefillReducer.test.ts` — set, overwrite, clear, no-op clear, node isolation, immutability
 - `domain/dataSources/*.test.ts` — each source's groups for D, F and root A; registry order and unique ids
 - `hooks/useBlueprintGraph.test.ts` — loading → ready, error, request aborted on unmount
@@ -160,7 +160,7 @@ Components are queried by role/label/text; the network is mocked with MSW.
 - `components/PrefillFieldRow.test.tsx` — empty row opens the modal, mapped row clears
 - `components/PrefillPanel.test.tsx` — fields of the form, clear, pick from modal, empty form
 - `components/DataSourceModal.test.tsx` — a11y, groups per source, injected source, hidden empty sources, select, close (Cancel/backdrop/Escape)
-- `App.test.tsx` — the full flow: load, map, mappings kept per form, clear, error state
+- `App.test.tsx` — the full flow: load, map, mappings kept per form, clear, switching forms closes the modal, error state
 
 ## Design decisions & trade-offs
 
@@ -193,6 +193,11 @@ Components are queried by role/label/text; the network is mocked with MSW.
   payload; `layoutGraph` (pure, tested) shifts them into view and computes the arrows from
   `prerequisites`. Forms stay real `<button>`s over a decorative SVG, so keyboard and screen
   readers work as with a list. A library would add zoom/pan/drag, which this view doesn't need.
+- **`position` is optional.** Only the drawing needs it, so a payload without positions still
+  loads: `layoutGraph` then places forms in columns by depth (longest path from a root).
+- **Switching forms resets the panel** (`key={selectedNode.id}`), so an open modal never
+  carries over to another form — the modal has no focus trap yet, so the graph behind it is
+  still reachable by keyboard.
 - **Styling** is plain CSS modules over a few design tokens in `src/index.css`.
 
 ## What I'd improve with more time

@@ -11,6 +11,22 @@ export interface FormGraphProps {
 // The app renders one graph, so a fixed id for the arrowhead marker is enough.
 const ARROW_ID = "form-graph-arrow";
 
+// A static element, not a component: one component per file.
+const formIcon = (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <rect
+      x="2"
+      y="2"
+      width="12"
+      height="12"
+      rx="2"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    <path d="M2 6h12M6 6v8" stroke="currentColor" strokeWidth="1.5" />
+  </svg>
+);
+
 export function FormGraph({ graph, selectedNodeId, onSelect }: FormGraphProps) {
   const layout = layoutGraph(graph);
   // Tab order follows the names (A, B, C…); the payload order is arbitrary.
@@ -66,7 +82,7 @@ export function FormGraph({ graph, selectedNodeId, onSelect }: FormGraphProps) {
                 onClick={() => onSelect(node.id)}
               >
                 <span className={styles.icon} aria-hidden="true">
-                  <FormIcon />
+                  {formIcon}
                 </span>
                 <span className={styles.text}>
                   {/* Hidden from the accessible name, so the button reads "Form A". */}
@@ -81,22 +97,5 @@ export function FormGraph({ graph, selectedNodeId, onSelect }: FormGraphProps) {
         </ul>
       </div>
     </nav>
-  );
-}
-
-function FormIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <rect
-        x="2"
-        y="2"
-        width="12"
-        height="12"
-        rx="2"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path d="M2 6h12M6 6v8" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
   );
 }
