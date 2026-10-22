@@ -42,13 +42,14 @@ describe("getTransitiveDependencyIds", () => {
 
   it("terminates on a cycle and never lists the node itself", () => {
     // X depends on Y, Y on Z, Z on X.
+    const node = (id: string, parent: string) => ({
+      id,
+      position: { x: 0, y: 0 },
+      data: { name: id, component_id: "f", prerequisites: [parent] },
+    });
     const cyclic: BlueprintGraph = {
       forms: [],
-      nodes: [
-        { id: "X", data: { name: "X", component_id: "f", prerequisites: ["Y"] } },
-        { id: "Y", data: { name: "Y", component_id: "f", prerequisites: ["Z"] } },
-        { id: "Z", data: { name: "Z", component_id: "f", prerequisites: ["X"] } },
-      ],
+      nodes: [node("X", "Y"), node("Y", "Z"), node("Z", "X")],
     };
     expect(getTransitiveDependencyIds(cyclic, "X")).toEqual(["Z"]);
   });

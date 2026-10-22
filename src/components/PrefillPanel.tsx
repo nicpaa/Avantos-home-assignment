@@ -5,6 +5,7 @@ import type { DataSource } from "../domain/dataSources/types";
 import type { PrefillMapping } from "../domain/prefill/types";
 import { DataSourceModal } from "./DataSourceModal";
 import { PrefillFieldRow } from "./PrefillFieldRow";
+import styles from "./PrefillPanel.module.css";
 
 export interface PrefillPanelProps {
   graph: BlueprintGraph;
@@ -31,13 +32,13 @@ export function PrefillPanel({
   const fields = form ? getPrefillableFields(form) : [];
 
   return (
-    <section aria-label="Prefill">
-      <h2>{node.data.name}</h2>
-      <p>Prefill fields for this form</p>
+    <section aria-label="Prefill" className={styles.panel}>
+      <h2 className={styles.title}>{node.data.name}</h2>
+      <p className={styles.subtitle}>Prefill fields for this form</p>
       {fields.length === 0 ? (
         <p>This form has no fields to prefill.</p>
       ) : (
-        <ul>
+        <ul className={styles.fields}>
           {fields.map((field) => (
             <PrefillFieldRow
               key={field}

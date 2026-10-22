@@ -53,39 +53,46 @@ export function DataSourceModal({
         className={styles.dialog}
         onClick={(event) => event.stopPropagation()}
       >
-        <h2>{TITLE}</h2>
-        {sections.length === 0 && <p>No data available to prefill from.</p>}
-        {sections.map(({ source, groups }) => (
-          <section key={source.id} aria-label={source.label}>
-            <h3>{source.label}</h3>
-            {groups.map((group) => (
-              <div key={group.id} role="group" aria-label={group.label}>
-                <h4>{group.label}</h4>
-                <ul>
-                  {group.options.map((option) => (
-                    <li key={option.key}>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onSelect({
-                            sourceId: source.id,
-                            optionKey: option.key,
-                            label: `${group.label}.${option.label}`,
-                          })
-                        }
-                      >
-                        {option.label}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </section>
-        ))}
-        <button type="button" onClick={onClose}>
-          Cancel
-        </button>
+        <h2 className={styles.title}>{TITLE}</h2>
+        <div className={styles.body}>
+          {sections.length === 0 && (
+            <p className={styles.empty}>No data available to prefill from.</p>
+          )}
+          {sections.map(({ source, groups }) => (
+            <section key={source.id} aria-label={source.label} className={styles.source}>
+              <h3 className={styles.sourceTitle}>{source.label}</h3>
+              {groups.map((group) => (
+                <div key={group.id} role="group" aria-label={group.label}>
+                  <h4 className={styles.groupTitle}>{group.label}</h4>
+                  <ul className={styles.options}>
+                    {group.options.map((option) => (
+                      <li key={option.key}>
+                        <button
+                          type="button"
+                          className={styles.option}
+                          onClick={() =>
+                            onSelect({
+                              sourceId: source.id,
+                              optionKey: option.key,
+                              label: `${group.label}.${option.label}`,
+                            })
+                          }
+                        >
+                          {option.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </section>
+          ))}
+        </div>
+        <div className={styles.footer}>
+          <button type="button" className={styles.cancel} onClick={onClose}>
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );

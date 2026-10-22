@@ -1,23 +1,63 @@
 .row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  min-height: 44px;
+  border-radius: var(--radius);
 }
 
 .empty {
-  border-style: dashed;
-  color: #666;
+  border: 1px dashed var(--color-border);
+}
+
+.empty:hover {
+  border-color: var(--color-accent);
 }
 
 .open {
+  display: flex;
   flex: 1;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+  padding: 0 12px;
   text-align: left;
+  color: var(--color-muted);
   background: none;
   border: none;
-  color: inherit;
+  border-radius: var(--radius);
   cursor: pointer;
+}
+
+.mapped {
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 8px 0 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.chip {
+  padding: 4px 10px;
+  font-size: 0.875rem;
+  background: var(--color-accent-soft);
+  border-radius: 999px;
+}
+
+.clear {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  font-size: 1.125rem;
+  line-height: 1;
+  color: var(--color-muted);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.clear:hover {
+  color: var(--color-text);
+  background: var(--color-bg);
 }

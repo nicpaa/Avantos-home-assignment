@@ -65,6 +65,7 @@ describe("PrefillPanel", () => {
   it("explains when the form has nothing to prefill", () => {
     const orphan: GraphNode = {
       id: "orphan",
+      position: { x: 0, y: 0 },
       data: { name: "Orphan", component_id: "missing-form", prerequisites: [] },
     };
     renderPanel({ node: orphan });

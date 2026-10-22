@@ -9,6 +9,8 @@ export interface BlueprintGraph {
 
 export interface GraphNode {
   id: string;
+  /** Top-left corner on the editor canvas, in pixels. */
+  position: { x: number; y: number };
   data: {
     /** Display name, e.g. "Form A". Forms themselves are all named "test form". */
     name: string;

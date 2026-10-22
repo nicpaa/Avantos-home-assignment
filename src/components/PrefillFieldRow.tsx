@@ -23,6 +23,7 @@ export function PrefillFieldRow({
           className={styles.open}
           onClick={onOpen}
         >
+          <DatabaseIcon />
           {field}
         </button>
       </li>
@@ -30,13 +31,31 @@ export function PrefillFieldRow({
   }
 
   return (
-    <li className={styles.row}>
-      <span>
+    <li className={`${styles.row} ${styles.mapped}`}>
+      <span className={styles.chip}>
         {field}: {mapping.label}
       </span>
-      <button type="button" aria-label={`Clear ${field}`} onClick={onClear}>
+      <button
+        type="button"
+        className={styles.clear}
+        aria-label={`Clear ${field}`}
+        onClick={onClear}
+      >
         ×
       </button>
     </li>
+  );
+}
+
+function DatabaseIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <ellipse cx="8" cy="4" rx="5" ry="2" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+    </svg>
   );
 }

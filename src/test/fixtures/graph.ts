@@ -25,8 +25,9 @@ function node(
   name: string,
   formId: string,
   prerequisites: string[],
+  position: GraphNode["position"],
 ): GraphNode {
-  return { id, data: { name, component_id: formId, prerequisites } };
+  return { id, position, data: { name, component_id: formId, prerequisites } };
 }
 
 // "button" is kept so field filtering is exercised.
@@ -45,13 +46,23 @@ function form(id: string): Form {
 }
 
 export const blueprintGraph: BlueprintGraph = {
+  // Positions rounded from the payload.
   nodes: [
-    node(NODE_IDS.FORM_A, "Form A", FORM_IDS.SHARED, []),
-    node(NODE_IDS.FORM_B, "Form B", FORM_IDS.B, [NODE_IDS.FORM_A]),
-    node(NODE_IDS.FORM_C, "Form C", FORM_IDS.C, [NODE_IDS.FORM_A]),
-    node(NODE_IDS.FORM_D, "Form D", FORM_IDS.SHARED, [NODE_IDS.FORM_B]),
-    node(NODE_IDS.FORM_E, "Form E", FORM_IDS.SHARED, [NODE_IDS.FORM_C]),
-    node(NODE_IDS.FORM_F, "Form F", FORM_IDS.SHARED, [NODE_IDS.FORM_D, NODE_IDS.FORM_E]),
+    node(NODE_IDS.FORM_A, "Form A", FORM_IDS.SHARED, [], { x: 494, y: 269 }),
+    node(NODE_IDS.FORM_B, "Form B", FORM_IDS.B, [NODE_IDS.FORM_A], { x: 781, y: 155 }),
+    node(NODE_IDS.FORM_C, "Form C", FORM_IDS.C, [NODE_IDS.FORM_A], { x: 779, y: 362 }),
+    node(NODE_IDS.FORM_D, "Form D", FORM_IDS.SHARED, [NODE_IDS.FORM_B], {
+      x: 1093,
+      y: 155,
+    }),
+    node(NODE_IDS.FORM_E, "Form E", FORM_IDS.SHARED, [NODE_IDS.FORM_C], {
+      x: 1100,
+      y: 362,
+    }),
+    node(NODE_IDS.FORM_F, "Form F", FORM_IDS.SHARED, [NODE_IDS.FORM_D, NODE_IDS.FORM_E], {
+      x: 1437,
+      y: 264,
+    }),
   ],
   forms: [form(FORM_IDS.SHARED), form(FORM_IDS.B), form(FORM_IDS.C)],
 };

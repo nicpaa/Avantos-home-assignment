@@ -1,0 +1,88 @@
+.scroller {
+  overflow-x: auto;
+  background-color: var(--color-surface);
+  background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
+  background-size: 16px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.canvas {
+  position: relative;
+  margin: 0 auto;
+}
+
+.edges {
+  position: absolute;
+  inset: 0;
+}
+
+.edge {
+  fill: none;
+  stroke: var(--color-edge);
+  stroke-width: 1.5;
+}
+
+.arrowHead {
+  fill: var(--color-edge);
+}
+
+.nodes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nodeItem {
+  position: absolute;
+}
+
+.node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 0 12px;
+  text-align: left;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.node:hover {
+  border-color: var(--color-accent);
+}
+
+.node[aria-pressed="true"] {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border-radius: 6px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.kind {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.name {
+  font-weight: 600;
+}

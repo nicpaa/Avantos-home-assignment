@@ -8,12 +8,17 @@ function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
+function isPosition(value: unknown): value is GraphNode["position"] {
+  return isRecord(value) && typeof value.x === "number" && typeof value.y === "number";
+}
+
 function isGraphNode(value: unknown): value is GraphNode {
   if (!isRecord(value) || typeof value.id !== "string" || !isRecord(value.data)) {
     return false;
   }
   const { name, component_id, prerequisites } = value.data;
   return (
+    isPosition(value.position) &&
     typeof name === "string" &&
     typeof component_id === "string" &&
     isStringArray(prerequisites)

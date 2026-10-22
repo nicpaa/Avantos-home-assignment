@@ -19,7 +19,20 @@ describe("isBlueprintGraph", () => {
     [
       "prerequisites that are not strings",
       {
-        nodes: [{ id: "a", data: { name: "A", component_id: "f", prerequisites: [1] } }],
+        nodes: [
+          {
+            id: "a",
+            position: { x: 0, y: 0 },
+            data: { name: "A", component_id: "f", prerequisites: [1] },
+          },
+        ],
+        forms: [],
+      },
+    ],
+    [
+      "a node without a position",
+      {
+        nodes: [{ id: "a", data: { name: "A", component_id: "f", prerequisites: [] } }],
         forms: [],
       },
     ],

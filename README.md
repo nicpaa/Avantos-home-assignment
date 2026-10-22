@@ -1,7 +1,7 @@
 # Journey Builder — Prefill Configuration
 
 A React + TypeScript app that fetches a blueprint's form DAG from the Avantos mock server,
-lists its forms, and lets you configure **prefill** for each form's fields: every field can be
+draws it as a graph of forms, and lets you configure **prefill** for each form's fields: every field can be
 mapped to a value from a pluggable **data source** — fields of directly or transitively
 upstream forms, or global data. Mappings can be viewed and cleared per form.
 
@@ -44,7 +44,8 @@ server ignores the ids, but they stay configurable so the client works against a
 
 ## How it works
 
-1. The app loads the graph and lists its forms (Form A … Form F).
+1. The app loads the graph and draws its forms (Form A … Form F) at the positions saved by
+   the Avantos editor, with an arrow from each form to the forms that depend on it.
 2. Selecting a form shows its prefillable fields.
    - A mapped field reads `email: Form A.email` and has a **×** button to clear it.
    - An empty field is a button that opens the source-selection modal.
@@ -63,11 +64,11 @@ Form A (transitive) and global data; Form A, a root, only offers global data.
 src/
   api/                  fetch client, response types, type guard (no React)
   domain/
-    graph/              pure DAG traversal + form/field lookup
+    graph/              pure DAG traversal, form/field lookup, graph layout
     prefill/            PrefillMapping types + pure reducer
     dataSources/        DataSource interface, the three sources, registry
   hooks/                useBlueprintGraph (fetch + abort), usePrefillMappings (useReducer)
-  components/           FormList, PrefillPanel, PrefillFieldRow, DataSourceModal
+  components/           FormGraph, PrefillPanel, PrefillFieldRow, DataSourceModal
   test/                 Vitest setup, MSW server, shared fixture graph
   App.tsx               wiring only
 ```
@@ -77,7 +78,7 @@ Dependencies point one way: `components → hooks → domain → api`. Everythin
 
 ```
 App                       loads graph, owns mappings + selected form
-├── FormList              one button per form
+├── FormGraph             one button per form + SVG arrows
 └── PrefillPanel          fields of the selected form, which field is being edited
     ├── PrefillFieldRow ×N   mapped (label + ×) or empty (opens modal)
     └── DataSourceModal      renders whatever sources it is given
@@ -150,11 +151,12 @@ Components are queried by role/label/text; the network is mocked with MSW.
 - `api/client.test.ts` — success, HTTP error, network error (with `cause`), invalid JSON, wrong shape
 - `domain/graph/traversal.test.ts` — root, direct vs transitive, diamond (A listed once), unknown id, cycle
 - `domain/graph/forms.test.ts` — node → shared form, buttons excluded from fields
+- `domain/graph/layout.test.ts` — offsets and size of the drawing, one edge per prerequisite, edge path
 - `domain/prefill/prefillReducer.test.ts` — set, overwrite, clear, no-op clear, node isolation, immutability
 - `domain/dataSources/*.test.ts` — each source's groups for D, F and root A; registry order and unique ids
 - `hooks/useBlueprintGraph.test.ts` — loading → ready, error, request aborted on unmount
 - `hooks/usePrefillMappings.test.ts` — set and clear through the hook
-- `components/FormList.test.tsx` — sorted list, selected state, selection callback
+- `components/FormGraph.test.tsx` — a button per form in name order, accessible names, arrows, selected state, selection callback
 - `components/PrefillFieldRow.test.tsx` — empty row opens the modal, mapped row clears
 - `components/PrefillPanel.test.tsx` — fields of the form, clear, pick from modal, empty form
 - `components/DataSourceModal.test.tsx` — a11y, groups per source, injected source, hidden empty sources, select, close (Cancel/backdrop/Escape)
@@ -187,6 +189,11 @@ Components are queried by role/label/text; the network is mocked with MSW.
 - **State is in memory.** Mappings are not persisted, and `node.data.input_mapping` (always `{}`
   in the mock, format undocumented) is ignored rather than guessed at.
 - **One-click selection.** Picking an option maps it immediately and closes the modal.
+- **The graph is drawn by hand, not with React Flow.** Nodes use the `position` saved in the
+  payload; `layoutGraph` (pure, tested) shifts them into view and computes the arrows from
+  `prerequisites`. Forms stay real `<button>`s over a decorative SVG, so keyboard and screen
+  readers work as with a list. A library would add zoom/pan/drag, which this view doesn't need.
+- **Styling** is plain CSS modules over a few design tokens in `src/index.css`.
 
 ## What I'd improve with more time
 

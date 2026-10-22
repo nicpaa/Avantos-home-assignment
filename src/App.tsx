@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "./App.module.css";
-import { FormList } from "./components/FormList";
+import { FormGraph } from "./components/FormGraph";
 import { PrefillPanel } from "./components/PrefillPanel";
 import { dataSources } from "./domain/dataSources/registry";
 import { useBlueprintGraph } from "./hooks/useBlueprintGraph";
@@ -16,13 +16,17 @@ export function App() {
 
   return (
     <main className={styles.layout}>
-      <h1>Journey Builder</h1>
-      {graphState.status === "loading" && <p>Loading forms…</p>}
-      {graphState.status === "error" && <p role="alert">{graphState.message}</p>}
+      <h1 className={styles.title}>Journey Builder</h1>
+      {graphState.status === "loading" && <p className={styles.hint}>Loading forms…</p>}
+      {graphState.status === "error" && (
+        <p role="alert" className={styles.error}>
+          {graphState.message}
+        </p>
+      )}
       {graph && (
         <>
-          <FormList
-            nodes={graph.nodes}
+          <FormGraph
+            graph={graph}
             selectedNodeId={selectedNodeId}
             onSelect={setSelectedNodeId}
           />
@@ -36,7 +40,7 @@ export function App() {
               onClear={(field) => clearMapping(selectedNode.id, field)}
             />
           ) : (
-            <p>Select a form to configure its prefill.</p>
+            <p className={styles.hint}>Select a form to configure its prefill.</p>
           )}
         </>
       )}
