@@ -17,7 +17,12 @@ export function PrefillFieldRow({
   if (!mapping) {
     return (
       <li className={`${styles.row} ${styles.empty}`}>
-        <button type="button" className={styles.open} onClick={onOpen}>
+        <button
+          type="button"
+          aria-haspopup="dialog"
+          className={styles.open}
+          onClick={onOpen}
+        >
           {field}
         </button>
       </li>

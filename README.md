@@ -192,6 +192,7 @@ Components are queried by role/label/text; the network is mocked with MSW.
 
 - Persist mappings — e.g. write them to `input_mapping` once its format is known.
 - Type compatibility: only offer source fields whose type matches the target field.
-- Modal UX: search/filter, focus trap and focus return, keyboard navigation between options.
+- Modal UX: search/filter, and a full focus trap with focus return to the field (today focus
+  only moves into the dialog on open), keyboard navigation between options.
 - Show the current mapping in the modal and allow replacing it without clearing first.
 - An end-to-end test (Playwright) against the real mock server.

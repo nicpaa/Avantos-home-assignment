@@ -2,7 +2,10 @@ import type { BlueprintGraph } from "../../api/types";
 import { getFormForNode, getPrefillableFields } from "../graph/forms";
 import type { DataSourceGroup } from "./types";
 
-/** One group per upstream node, listing its form's prefillable fields. Shared by the graph-based sources. */
+/**
+ * One group per upstream node, listing its form's prefillable fields.
+ * Shared by the graph-based sources.
+ */
 export function formFieldGroups(
   graph: BlueprintGraph,
   nodeIds: string[],

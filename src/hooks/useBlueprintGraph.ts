@@ -13,10 +13,12 @@ export function useBlueprintGraph(): BlueprintGraphState {
 
   useEffect(() => {
     const controller = new AbortController();
+    // After abort (unmount, or StrictMode's first effect run) nobody is listening anymore.
     fetchBlueprintGraph(controller.signal).then(
-      (graph) => setState({ status: "ready", graph }),
+      (graph) => {
+        if (!controller.signal.aborted) setState({ status: "ready", graph });
+      },
       (error: unknown) => {
-        // Unmounted (or StrictMode's first effect run): nobody is listening anymore.
         if (controller.signal.aborted) return;
         const message = error instanceof Error ? error.message : String(error);
         setState({ status: "error", message });

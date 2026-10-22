@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { DataSource, DataSourceContext } from "../domain/dataSources/types";
 import type { PrefillMapping } from "../domain/prefill/types";
 import styles from "./DataSourceModal.module.css";
@@ -19,6 +19,13 @@ export function DataSourceModal({
   onSelect,
   onClose,
 }: DataSourceModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Move focus into the dialog so keyboard and screen-reader users land on it.
+  useEffect(() => {
+    dialogRef.current?.focus();
+  }, []);
+
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
@@ -38,6 +45,8 @@ export function DataSourceModal({
   return (
     <div className={styles.backdrop} onClick={onClose}>
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={TITLE}

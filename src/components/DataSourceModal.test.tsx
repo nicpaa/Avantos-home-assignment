@@ -25,10 +25,11 @@ function groupLabels(sourceLabel: string) {
 }
 
 describe("DataSourceModal", () => {
-  it("is an accessible modal dialog", () => {
+  it("is an accessible modal dialog that receives focus", () => {
     renderModal();
     const dialog = screen.getByRole("dialog", { name: "Select data element to map" });
     expect(dialog).toHaveAttribute("aria-modal", "true");
+    expect(dialog).toHaveFocus();
   });
 
   it("shows the groups of every registered source", () => {
@@ -93,7 +94,8 @@ describe("DataSourceModal", () => {
       screen.getByRole("heading", { name: "Select data element to map" }),
     );
     const backdrop = screen.getByRole("dialog").parentElement;
-    if (backdrop) await userEvent.click(backdrop);
+    if (!backdrop) throw new Error("The dialog should be wrapped in a backdrop");
+    await userEvent.click(backdrop);
     await userEvent.keyboard("{Escape}");
 
     expect(onClose).toHaveBeenCalledTimes(3);
