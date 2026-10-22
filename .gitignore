@@ -1,0 +1,11 @@
+node_modules
+dist
+dist-ssr
+coverage
+*.local
+.env
+.DS_Store
+
+# AI assistant instructions (kept local)
+CLAUDE.md
+.claude/
