@@ -47,6 +47,54 @@ describe("FormGraph", () => {
     );
   });
 
+  it("highlights the selected form's direct and transitive dependencies", () => {
+    render(
+      <FormGraph
+        graph={blueprintGraph}
+        selectedNodeId={NODE_IDS.FORM_D}
+        onSelect={() => {}}
+      />,
+    );
+    // D depends on B directly and on A through B; C, E and F are unrelated.
+    const formB = screen.getByRole("button", { name: "Form B" });
+    const formA = screen.getByRole("button", { name: "Form A" });
+    expect(formB).toHaveAttribute("data-relation", "direct");
+    expect(formB).toHaveAccessibleDescription("Direct dependency");
+    expect(formA).toHaveAttribute("data-relation", "transitive");
+    expect(formA).toHaveAccessibleDescription("Transitive dependency");
+    expect(screen.getByRole("button", { name: "Form C" })).not.toHaveAttribute(
+      "data-relation",
+    );
+  });
+
+  it("highlights only the arrows on the selected form's upstream paths", () => {
+    const { container } = render(
+      <FormGraph
+        graph={blueprintGraph}
+        selectedNodeId={NODE_IDS.FORM_D}
+        onSelect={() => {}}
+      />,
+    );
+    // A → B and B → D; not A → C, C → E or the arrows into F.
+    expect(container.querySelectorAll("path[data-active]")).toHaveLength(2);
+  });
+
+  it("shows the legend only while a form is selected", () => {
+    const { rerender } = render(
+      <FormGraph graph={blueprintGraph} selectedNodeId={null} onSelect={() => {}} />,
+    );
+    expect(screen.queryByRole("list", { name: "Legend" })).toBeNull();
+
+    rerender(
+      <FormGraph
+        graph={blueprintGraph}
+        selectedNodeId={NODE_IDS.FORM_F}
+        onSelect={() => {}}
+      />,
+    );
+    expect(screen.getByRole("list", { name: "Legend" })).toBeInTheDocument();
+  });
+
   it("reports the clicked node id", async () => {
     const onSelect = vi.fn();
     render(

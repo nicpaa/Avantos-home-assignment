@@ -8,6 +8,10 @@
   --color-accent: #2563eb;
   --color-accent-soft: #e8effd;
   --color-edge: #a9b0ba;
+  --color-direct: #15803d;
+  --color-direct-soft: #e6f4ea;
+  --color-transitive: #b45309;
+  --color-transitive-soft: #fdf2e3;
   --radius: 8px;
   --shadow: 0 1px 2px rgb(16 24 40 / 6%), 0 1px 3px rgb(16 24 40 / 10%);
 

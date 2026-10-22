@@ -46,13 +46,17 @@ server ignores the ids, but they stay configurable so the client works against a
 
 1. The app loads the graph and draws its forms (Form A … Form F) at the positions saved by
    the Avantos editor, with an arrow from each form to the forms that depend on it.
-2. Selecting a form shows its prefillable fields.
+2. Selecting a form highlights where its prefill data can come from: direct dependencies in
+   green, transitive ones in dashed amber, and the arrows leading to the form (with a legend).
+   Below the graph it shows the form's prefillable fields.
    - A mapped field reads `email: Form A.email` and has a **×** button to clear it.
    - An empty field is a button that opens the source-selection modal.
 3. The modal groups the options by data source:
    - **Direct dependencies** — fields of the forms this form directly depends on,
    - **Transitive dependencies** — fields of forms further upstream,
    - **Global data** — action and client organisation properties.
+     A search box (focused when the modal opens) narrows the list: typing `email` keeps the
+     email fields of every group, typing `form a` keeps all of Form A's fields.
 4. Picking an option stores the mapping for that form's field.
 
 For the blueprint's DAG (A → B, C; B → D; C → E; D, E → F), Form D offers Form B (direct),
@@ -153,13 +157,13 @@ Components are queried by role/label/text; the network is mocked with MSW.
 - `domain/graph/forms.test.ts` — node → shared form, buttons excluded from fields
 - `domain/graph/layout.test.ts` — offsets and size of the drawing, one edge per prerequisite, edge path, depth layout when positions are missing
 - `domain/prefill/prefillReducer.test.ts` — set, overwrite, clear, no-op clear, node isolation, immutability
-- `domain/dataSources/*.test.ts` — each source's groups for D, F and root A; registry order and unique ids
+- `domain/dataSources/*.test.ts` — each source's groups for D, F and root A; registry order and unique ids; search by option or group label
 - `hooks/useBlueprintGraph.test.ts` — loading → ready, error, request aborted on unmount
 - `hooks/usePrefillMappings.test.ts` — set and clear through the hook
-- `components/FormGraph.test.tsx` — a button per form in name order, accessible names, arrows, selected state, selection callback
+- `components/FormGraph.test.tsx` — a button per form in name order, accessible names, arrows, selected state, dependency highlighting and legend, selection callback
 - `components/PrefillFieldRow.test.tsx` — empty row opens the modal, mapped row clears
 - `components/PrefillPanel.test.tsx` — fields of the form, clear, pick from modal, empty form
-- `components/DataSourceModal.test.tsx` — a11y, groups per source, injected source, hidden empty sources, select, close (Cancel/backdrop/Escape)
+- `components/DataSourceModal.test.tsx` — a11y and focus, groups per source, injected source, hidden empty sources, search and no-match message, select, close (Cancel/backdrop/Escape)
 - `App.test.tsx` — the full flow: load, map, mappings kept per form, clear, switching forms closes the modal, error state
 
 ## Design decisions & trade-offs
@@ -195,6 +199,10 @@ Components are queried by role/label/text; the network is mocked with MSW.
   readers work as with a list. A library would add zoom/pan/drag, which this view doesn't need.
 - **`position` is optional.** Only the drawing needs it, so a payload without positions still
   loads: `layoutGraph` then places forms in columns by depth (longest path from a root).
+- **The graph highlights the selected form's dependencies** with the same traversal functions
+  the prefill sources use, so the picture always matches what the modal offers. The relation
+  is also exposed to screen readers (`aria-describedby` → legend item), without changing the
+  buttons' names.
 - **Switching forms resets the panel** (`key={selectedNode.id}`), so an open modal never
   carries over to another form — the modal has no focus trap yet, so the graph behind it is
   still reachable by keyboard.
@@ -204,7 +212,7 @@ Components are queried by role/label/text; the network is mocked with MSW.
 
 - Persist mappings — e.g. write them to `input_mapping` once its format is known.
 - Type compatibility: only offer source fields whose type matches the target field.
-- Modal UX: search/filter, and a full focus trap with focus return to the field (today focus
-  only moves into the dialog on open), keyboard navigation between options.
+- Modal UX: a full focus trap with focus return to the field (today focus only moves to the
+  search box on open), keyboard navigation between options.
 - Show the current mapping in the modal and allow replacing it without clearing first.
 - An end-to-end test (Playwright) against the real mock server.

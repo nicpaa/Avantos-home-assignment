@@ -15,6 +15,10 @@ export interface PositionedNode {
 
 export interface GraphEdgeLayout {
   id: string;
+  /** The prerequisite (parent) node. */
+  source: string;
+  /** The node that depends on it. */
+  target: string;
   /** SVG path from the parent's right edge to the child's left edge. */
   path: string;
 }
@@ -56,7 +60,14 @@ export function layoutGraph(graph: BlueprintGraph): GraphLayout {
     child.node.data.prerequisites.flatMap((parentId) => {
       const parent = byId.get(parentId);
       if (!parent) return [];
-      return [{ id: `${parentId}->${child.node.id}`, path: connect(parent, child) }];
+      return [
+        {
+          id: `${parentId}->${child.node.id}`,
+          source: parentId,
+          target: child.node.id,
+          path: connect(parent, child),
+        },
+      ];
     }),
   );
 

@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { searchGroups } from "../domain/dataSources/search";
 import type { DataSource, DataSourceContext } from "../domain/dataSources/types";
 import type { PrefillMapping } from "../domain/prefill/types";
 import styles from "./DataSourceModal.module.css";
@@ -19,11 +20,12 @@ export function DataSourceModal({
   onSelect,
   onClose,
 }: DataSourceModalProps) {
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const [query, setQuery] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
 
-  // Move focus into the dialog so keyboard and screen-reader users land on it.
+  // Move focus into the dialog, onto the search box, so typing filters right away.
   useEffect(() => {
-    dialogRef.current?.focus();
+    searchRef.current?.focus();
   }, []);
 
   useEffect(() => {
@@ -34,19 +36,20 @@ export function DataSourceModal({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
-  // Hide sources and groups with nothing to offer, e.g. no dependencies for a root form.
+  // Hide sources and groups with nothing to offer: no dependencies for a root form,
+  // or nothing matching the search.
   const sections = sources
     .map((source) => ({
       source,
-      groups: source.getOptions(context).filter((group) => group.options.length > 0),
+      groups: searchGroups(source.getOptions(context), query).filter(
+        (group) => group.options.length > 0,
+      ),
     }))
     .filter(({ groups }) => groups.length > 0);
 
   return (
     <div className={styles.backdrop} onClick={onClose}>
       <div
-        ref={dialogRef}
-        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={TITLE}
@@ -54,9 +57,22 @@ export function DataSourceModal({
         onClick={(event) => event.stopPropagation()}
       >
         <h2 className={styles.title}>{TITLE}</h2>
+        <input
+          ref={searchRef}
+          type="search"
+          aria-label="Search data elements"
+          placeholder="Search"
+          className={styles.search}
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
         <div className={styles.body}>
           {sections.length === 0 && (
-            <p className={styles.empty}>No data available to prefill from.</p>
+            <p className={styles.empty}>
+              {query.trim() === ""
+                ? "No data available to prefill from."
+                : `Nothing matches "${query.trim()}".`}
+            </p>
           )}
           {sections.map(({ source, groups }) => (
             <section key={source.id} aria-label={source.label} className={styles.source}>

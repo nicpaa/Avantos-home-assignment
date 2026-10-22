@@ -27,6 +27,16 @@
   fill: var(--color-edge);
 }
 
+.edgeActive {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2;
+}
+
+.arrowHeadActive {
+  fill: var(--color-accent);
+}
+
 .nodes {
   margin: 0;
   padding: 0;
@@ -85,4 +95,57 @@
 
 .name {
   font-weight: 600;
+}
+
+.node[data-relation="direct"] {
+  background: var(--color-direct-soft);
+  border-color: var(--color-direct);
+}
+
+.node[data-relation="transitive"] {
+  background: var(--color-transitive-soft);
+  border-color: var(--color-transitive);
+  border-style: dashed;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0;
+  padding: 8px 16px 12px;
+  list-style: none;
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend li::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border: 1px solid;
+  border-radius: 3px;
+}
+
+.legendSelected::before {
+  background: var(--color-surface);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-soft);
+}
+
+.legendDirect::before {
+  background: var(--color-direct-soft);
+  border-color: var(--color-direct);
+}
+
+.legendTransitive::before {
+  background: var(--color-transitive-soft);
+  border-color: var(--color-transitive);
+  border-style: dashed;
 }

@@ -25,11 +25,26 @@ function groupLabels(sourceLabel: string) {
 }
 
 describe("DataSourceModal", () => {
-  it("is an accessible modal dialog that receives focus", () => {
+  it("is an accessible modal dialog with focus on the search box", () => {
     renderModal();
     const dialog = screen.getByRole("dialog", { name: "Select data element to map" });
     expect(dialog).toHaveAttribute("aria-modal", "true");
-    expect(dialog).toHaveFocus();
+    expect(screen.getByRole("searchbox", { name: "Search data elements" })).toHaveFocus();
+  });
+
+  it("filters the options as the user types", async () => {
+    renderModal();
+    await userEvent.type(screen.getByRole("searchbox"), "form a");
+
+    expect(screen.queryByRole("region", { name: "Direct dependencies" })).toBeNull();
+    expect(groupLabels("Transitive dependencies")).toEqual(["Form A"]);
+    expect(screen.queryByRole("region", { name: "Global data" })).toBeNull();
+  });
+
+  it("says when nothing matches the search", async () => {
+    renderModal();
+    await userEvent.type(screen.getByRole("searchbox"), "zip");
+    expect(screen.getByText('Nothing matches "zip".')).toBeInTheDocument();
   });
 
   it("shows the groups of every registered source", () => {
