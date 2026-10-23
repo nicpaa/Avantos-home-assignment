@@ -1,6 +1,6 @@
 /**
  * Response of `action-blueprint-graph-get`, reduced to the fields the app uses.
- * The payload carries more (edges, positions, ui_schema, ...); the guard ignores it.
+ * The payload carries more (edges, ui_schema, sla_duration, ...); the guard ignores it.
  */
 export interface BlueprintGraph {
   nodes: GraphNode[];
