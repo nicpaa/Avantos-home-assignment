@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { dataSources } from "../domain/dataSources/registry";
+import { availableDataSources, selectDataSources } from "../domain/dataSources/registry";
 import type { DataSource } from "../domain/dataSources/types";
 import { blueprintGraph, NODE_IDS } from "../test/fixtures/graph";
 import { DataSourceModal, type DataSourceModalProps } from "./DataSourceModal";
@@ -8,7 +8,7 @@ import { DataSourceModal, type DataSourceModalProps } from "./DataSourceModal";
 function renderModal(props: Partial<DataSourceModalProps> = {}) {
   render(
     <DataSourceModal
-      sources={dataSources}
+      sources={availableDataSources}
       context={{ graph: blueprintGraph, targetNodeId: NODE_IDS.FORM_D }}
       onSelect={() => {}}
       onClose={() => {}}
@@ -69,8 +69,30 @@ describe("DataSourceModal", () => {
         },
       ],
     };
-    renderModal({ sources: [...dataSources, tenantSource] });
+    renderModal({ sources: [...availableDataSources, tenantSource] });
     expect(groupLabels("Tenant settings")).toEqual(["Tenant"]);
+  });
+
+  // Every non-empty combination of the built-in sources, chosen the way configuration does.
+  it.each([
+    "direct-dependencies",
+    "transitive-dependencies",
+    "global-data",
+    "direct-dependencies,transitive-dependencies",
+    "direct-dependencies,global-data",
+    "transitive-dependencies,global-data",
+    "direct-dependencies,transitive-dependencies,global-data",
+  ])("shows exactly the configured sources: %s", (idList) => {
+    const sources = selectDataSources(availableDataSources, idList);
+    // Form F has options in every source.
+    renderModal({
+      sources,
+      context: { graph: blueprintGraph, targetNodeId: NODE_IDS.FORM_F },
+    });
+    const shown = screen
+      .getAllByRole("region")
+      .map((region) => region.getAttribute("aria-label"));
+    expect(shown).toEqual(sources.map((source) => source.label));
   });
 
   it("hides sources with no options", () => {

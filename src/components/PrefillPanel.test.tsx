@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { GraphNode } from "../api/types";
-import { dataSources } from "../domain/dataSources/registry";
+import { availableDataSources } from "../domain/dataSources/registry";
 import { blueprintGraph, NODE_IDS } from "../test/fixtures/graph";
 import { PrefillPanel, type PrefillPanelProps } from "./PrefillPanel";
 
@@ -17,7 +17,7 @@ function renderPanel(props: Partial<PrefillPanelProps> = {}) {
       graph={blueprintGraph}
       node={getNode(NODE_IDS.FORM_D)}
       mappings={{}}
-      sources={dataSources}
+      sources={availableDataSources}
       onSet={() => {}}
       onClear={() => {}}
       {...props}

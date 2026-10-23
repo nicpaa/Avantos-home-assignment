@@ -2,9 +2,15 @@ import { useState } from "react";
 import styles from "./App.module.css";
 import { FormGraph } from "./components/FormGraph";
 import { PrefillPanel } from "./components/PrefillPanel";
-import { dataSources } from "./domain/dataSources/registry";
+import { availableDataSources, selectDataSources } from "./domain/dataSources/registry";
 import { useBlueprintGraph } from "./hooks/useBlueprintGraph";
 import { usePrefillMappings } from "./hooks/usePrefillMappings";
+
+// Which sources the modal offers, and in what order, is configuration (see .env.example).
+const dataSources = selectDataSources(
+  availableDataSources,
+  import.meta.env.VITE_DATA_SOURCES,
+);
 
 export function App() {
   const graphState = useBlueprintGraph();
