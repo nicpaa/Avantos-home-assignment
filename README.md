@@ -191,24 +191,6 @@ Components are queried by role/label/text; the network is mocked with MSW.
 - `components/DataSourceModal.test.tsx` — a11y and focus, groups per source, injected source, all 7 source combinations, hidden empty sources, search and no-match message, select, close (Cancel/backdrop/Escape)
 - `App.test.tsx` — the full flow: load, map, mappings kept per form, clear, switching forms closes the modal, error state
 
-## Built from scratch: compared to the starter
-
-The optional Claude-generated starter (`journey-builder-claude.zip`) was read for reference, not
-used as a base. Both use the same core idea (a data source interface plus a list of active
-sources), which is the natural shape for this requirement. What this implementation does
-differently, and why:
-
-| Starter                                                                            | This repo                                                                                                         | Why                                                                                                                  |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Direct and transitive dependencies are **one** provider ("Form fields" + a badge)  | **Three independent sources**: direct, transitive, global                                                         | The task asks for _any combination_ of the three; with one merged provider "direct only" isn't possible              |
-| Changing the active sources means editing the provider array                       | `VITE_DATA_SOURCES` picks sources and order; all 7 combinations are tested                                        | "...can be easily used **without code changes**"                                                                     |
-| Response cast with `as BlueprintGraph`; `queue.shift() as string` in the traversal | Response enters as `unknown` and is checked by a type guard; no casts or `!` anywhere                             | A backend change fails at the boundary with a clear message instead of as `undefined` deep in the UI                 |
-| Folders by feature (`graph/`, `prefill/`), React and logic mixed                   | `api/` → `domain/` (pure TS, no React) → `hooks/` → `components/`                                                 | Rules (traversal, reducer, sources, layout, search) are tested as plain functions                                    |
-| Mappings in `useState` + `useCallback` setters                                     | Pure `prefillReducer` behind `usePrefillMappings`                                                                 | State transitions are tested on their own (no-op clear keeps the same object, nodes sharing a form stay independent) |
-| Tests for a few modules (traversal, providers, mappings hook, modal)               | Tests for every layer: guard, client (MSW), traversal, layout, reducer, each source, hooks, components, full flow | "Does the project have good tests?" — including a test that _proves_ a new source needs no UI change                 |
-| Modal can't be closed with Escape; focus stays behind it                           | Escape/backdrop/Cancel close it, focus moves to its search box, switching forms closes it                         | Keyboard and screen-reader users                                                                                     |
-| Plain list of forms                                                                | Graph at the editor's saved positions, highlighting the selected form's dependencies                              | Not required; shows _why_ the modal offers the sources it does                                                       |
-
 ## Design decisions & trade-offs
 
 - **`prerequisites` is the graph's source of truth, not `edges`.** Both describe the same DAG;
@@ -253,14 +235,3 @@ differently, and why:
   carries over to another form — the modal has no focus trap yet, so the graph behind it is
   still reachable by keyboard.
 - **Styling** is plain CSS modules over a few design tokens in `src/index.css`.
-
-## What I'd improve with more time
-
-- Asynchronous sources (e.g. options fetched from an API): a second interface shape
-  `loadOptions(context, signal): Promise`, with loading and error states per source in the modal.
-- Persist mappings — e.g. write them to `input_mapping` once its format is known.
-- Type compatibility: only offer source fields whose type matches the target field.
-- Modal UX: a full focus trap with focus return to the field (today focus only moves to the
-  search box on open), keyboard navigation between options.
-- Show the current mapping in the modal and allow replacing it without clearing first.
-- An end-to-end test (Playwright) against the real mock server.
